@@ -1,20 +1,31 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// App.tsx
+/* import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import RootStackNavigator from './src/navigation/RootStackNavigator';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <RootStackNavigator />
+    </NavigationContainer>
+  );
+} */
+
+import React, { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import AuthStackNavigator from './src/navigation/AuthStackNavigator';
+import RootStackNavigator from './src/navigation/RootStackNavigator';
+
+export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  return (
+    <NavigationContainer>
+      {isLoggedIn ? (
+        <RootStackNavigator /> // Màn hình đã đăng nhập
+      ) : (
+        <AuthStackNavigator onLogin={() => setIsLoggedIn(true)} /> // Màn hình đăng nhập
+      )}
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
