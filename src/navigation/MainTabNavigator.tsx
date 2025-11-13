@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/home/HomeScreen';
 import ActivityScreen from '../screens/activity/ActivityScreen';
 import NewsScreen from '../screens/news/NewsScreen';
+import NewsOnlineScreen from '../screens/news/NewsOnlineScreen';
 import AccountScreen from '../screens/account/AccountScreen';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -11,6 +12,7 @@ export type MainTabParamList = {
   Home: undefined;
   Activity: undefined;
   News: undefined;
+  NewsOnline: undefined;
   Account: undefined;
 };
 
@@ -38,6 +40,13 @@ export default function MainTabNavigator() {
         component={NewsScreen}
         options={{
           tabBarIcon: ({ color, size }) => <Ionicons name="newspaper-outline" size={size} color={color} />,
+        }}
+      />
+       <Tab.Screen
+        name="NewsOnline"
+        component={NewsOnlineScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => <Ionicons name="globe-outline" size={size} color={color} />,
         }}
       />
       <Tab.Screen

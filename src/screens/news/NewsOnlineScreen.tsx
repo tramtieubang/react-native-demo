@@ -4,30 +4,25 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  Linking,
-  ActivityIndicator,
-  StyleSheet,
   Image,
+  ActivityIndicator,
   ScrollView,
   RefreshControl,
-  Alert,
+  StyleSheet,
 } from 'react-native';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList, NewsItem } from '../../navigation/RootStackNavigator';
 
-interface NewsItem {
-  source: string;
-  title: string;
-  link: string;
-  description: string;
-  image?: string;
-  pubDate?: string;
-}
+type NewsDetailNavigationProp = NativeStackNavigationProp<RootStackParamList, 'NewsDetail'>;
 
 const NEWS_SOURCES = ['All', 'VnExpress', 'Tuổi Trẻ', 'VietnamNet'];
 const SERVER_URL = 'http://192.168.1.9:4000';
-const PAGE_LIMIT = 10; // Số tin mỗi lần load
+const PAGE_LIMIT = 10;
 
-export default function NewsScreen() {
+export default function NewsOnlineScreen() {
+  const navigation = useNavigation<NewsDetailNavigationProp>();
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -50,6 +45,7 @@ export default function NewsScreen() {
     if (!hasMore && currentOffset !== 0) return;
     try {
       if (currentOffset === 0) setLoading(true);
+
       const url =
         selectedSource === 'All'
           ? `${SERVER_URL}/api/news?limit=${PAGE_LIMIT}&offset=${currentOffset}`
@@ -73,21 +69,15 @@ export default function NewsScreen() {
     resetAndFetch();
   };
 
-  const handlePress = (url: string) => {
-    if (url && url.startsWith('http')) {
-      Linking.openURL(url).catch(() =>
-        Alert.alert('Thông báo', 'Không mở được link')
-      );
-    } else {
-      Alert.alert('Thông báo', 'Link không hợp lệ');
-    }
+  const handlePress = (item: NewsItem) => {
+    navigation.navigate('NewsDetail', { newsItem: item });
   };
 
   const renderItem = ({ item }: { item: NewsItem }) => (
-    <TouchableOpacity onPress={() => handlePress(item.link)}>
+    <TouchableOpacity onPress={() => handlePress(item)}>
       <View style={styles.card}>
         {item.image ? (
-          <Image source={{ uri: item.image }} style={styles.thumbnail} resizeMode="cover" />
+          <Image source={{ uri: item.image }} style={styles.thumbnail} />
         ) : (
           <View style={[styles.thumbnail, styles.placeholder]}>
             <Text style={styles.placeholderText}>No Image</Text>
@@ -107,7 +97,6 @@ export default function NewsScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Tabs */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabContainer}>
         {NEWS_SOURCES.map((source) => (
           <TouchableOpacity key={source} onPress={() => setSelectedSource(source)}>
